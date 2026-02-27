@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { usePermissions } from '@/components/ui/hooks/usePermissions';
-import AccessDenied from '@/components/ui/AccessDenied';
+import { useRoleRedirect } from '@/components/ui/hooks/useRoleRedirect';
 import ConfirmModal from '@/components/modals/confirmModal';
 import SucessModal from '@/components/modals/sucessModal';
 import {
@@ -118,8 +117,7 @@ const prioridadeConfig = {
 const fmt = (v: number) => `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 
 export default function Suporte() {
-  const { isSuperAdmin } = usePermissions();
-  if (!isSuperAdmin) return <AccessDenied />;
+  const allowed = useRoleRedirect({ superAdminOnly: true });
 
   const [search, setSearch]           = useState('');
   const [filterStatus, setFilterStatus] = useState('Todos');
@@ -131,6 +129,8 @@ export default function Suporte() {
   const [sucessModal, setSucessModal] = useState<{ title: string; message: string } | null>(null);
   const [tab, setTab]                 = useState<'empresas' | 'tickets'>('empresas');
   const [ticketTab, setTicketTab]     = useState<'aberto' | 'em_andamento' | 'resolvido' | 'todos'>('todos');
+
+  if (!allowed) return null;
 
   const filtered = EMPRESAS.filter(e => {
     const matchSearch = e.nome.toLowerCase().includes(search.toLowerCase()) || e.adminEmail.toLowerCase().includes(search.toLowerCase());

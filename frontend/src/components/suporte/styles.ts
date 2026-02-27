@@ -5,32 +5,46 @@ const fadeUp = keyframes`
   to   { opacity: 1; transform: translateY(0); }
 `;
 
+// ─── Layout base (idêntico ao Pacientes) ──────────────────────────────────────
+
 export const Container = styled.div`
   padding: 40px;
   width: 100%;
   min-height: 100vh;
   background: #f5f5f5;
   box-sizing: border-box;
+  overflow-x: hidden;
   animation: ${fadeUp} 0.35s ease;
+
   @media (max-width: 1024px) { padding: 72px 20px 24px; }
   @media (max-width: 768px)  { padding: 72px 14px 20px; }
+  @media (max-width: 480px)  { padding: 68px 12px 20px; }
 `;
 
 export const Header = styled.div`
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  align-items: flex-start;
+  margin-bottom: 28px;
+  gap: 16px;
   flex-wrap: wrap;
-  gap: 12px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin-bottom: 20px;
+    gap: 4px;
+  }
 `;
 
 export const Title = styled.h1`
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-family: var(--font-cabourg-bold), 'Cabourg', serif;
   color: #BBA188;
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
+
+  @media (max-width: 768px) { font-size: 1.6rem; }
+  @media (max-width: 480px) { font-size: 1.4rem; }
 `;
 
 export const Subtitle = styled.p`
@@ -38,6 +52,8 @@ export const Subtitle = styled.p`
   color: #aaa;
   margin: 5px 0 0;
 `;
+
+// ─── Barra de impersonação ────────────────────────────────────────────────────
 
 export const ImpersonateBar = styled.div`
   display: flex;
@@ -76,12 +92,24 @@ export const ImpersonateBtn = styled.button`
   &:hover { background: rgba(59,130,246,0.08); }
 `;
 
+// ─── Stats (idêntico ao Pacientes) ───────────────────────────────────────────
+
 export const StatsRow = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
-  @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+  gap: 18px;
+  margin-bottom: 28px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
 `;
 
 export const StatBox = styled.div<{ $alert?: boolean }>`
@@ -108,12 +136,19 @@ export const StatBoxLabel = styled.div`
   letter-spacing: 0.4px;
 `;
 
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+
 export const TabRow = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 20px;
   flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 4px;
+    & > button { flex: 1; }
+  }
 `;
 
 export const TabBtn = styled.button<{ $active: boolean; $small?: boolean }>`
@@ -126,137 +161,192 @@ export const TabBtn = styled.button<{ $active: boolean; $small?: boolean }>`
   transition: all 0.2s;
   background: ${p => p.$active ? '#BBA188' : 'transparent'};
   color: ${p => p.$active ? 'white' : '#888'};
-  &:hover { background: ${p => p.$active ? '#BBA188' : 'rgba(187,161,136,0.1)'}; color: ${p => p.$active ? 'white' : '#BBA188'}; }
+  font-family: inherit;
+
+  &:hover {
+    background: ${p => p.$active ? '#BBA188' : 'rgba(187,161,136,0.1)'};
+    color: ${p => p.$active ? 'white' : '#BBA188'};
+  }
+
+  @media (max-width: 480px) {
+    padding: ${p => p.$small ? '7px 10px' : '8px 14px'};
+    font-size: 0.75rem;
+    text-align: center;
+  }
 `;
+
+// ─── Controls / Search / Filtros (idêntico ao Pacientes) ─────────────────────
 
 export const Controls = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  align-items: center;
   flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
 `;
 
 export const SearchBarWrapper = styled.div`
   position: relative;
   flex: 1;
-  min-width: 220px;
-  max-width: 360px;
+  max-width: 380px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    width: 100%;
+  }
 `;
 
 export const SearchIconWrap = styled.div`
   position: absolute;
-  left: 12px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   color: #bbb;
   pointer-events: none;
+  display: flex;
 `;
 
 export const SearchInputStyled = styled.input`
   width: 100%;
-  padding: 10px 14px 10px 38px;
-  border: 1.5px solid #eee;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  color: #333;
+  padding: 11px 16px 11px 42px;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 50px;
+  font-size: 0.9rem;
   background: white;
-  outline: none;
+  color: #333;
+  transition: all 0.25s;
   box-sizing: border-box;
-  transition: border-color 0.2s;
-  &:focus { border-color: #BBA188; }
+
+  &:focus {
+    outline: none;
+    border-color: #BBA188;
+    box-shadow: 0 0 0 3px rgba(187,161,136,0.15);
+  }
   &::placeholder { color: #bbb; }
 `;
 
 export const FilterRow = styled.div`
   display: flex;
+  gap: 10px;
   align-items: center;
-  gap: 8px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) { width: 100%; }
 `;
 
 export const DropdownWrapper = styled.div`
   position: relative;
+
+  @media (max-width: 768px) { flex: 1; }
 `;
 
 export const DropdownBtn = styled.button`
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 9px 14px;
-  border: 1.5px solid #eee;
-  border-radius: 10px;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 50px;
   background: white;
-  font-size: 0.83rem;
-  color: #555;
+  color: #444;
+  font-size: 0.88rem;
+  font-weight: 500;
   cursor: pointer;
-  white-space: nowrap;
-  transition: border-color 0.2s;
+  min-width: 130px;
+  justify-content: space-between;
+  transition: all 0.2s;
+  width: 100%;
+
   &:hover { border-color: #BBA188; }
 `;
 
 export const DropdownList = styled.div`
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 8px);
   left: 0;
+  min-width: 100%;
   background: white;
-  border: 1.5px solid #eee;
-  border-radius: 10px;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 14px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   z-index: 100;
-  min-width: 130px;
   overflow: hidden;
 `;
 
 export const DropdownItem = styled.div<{ $active?: boolean }>`
-  padding: 9px 14px;
-  font-size: 0.83rem;
-  color: ${p => p.$active ? '#BBA188' : '#555'};
-  background: ${p => p.$active ? 'rgba(187,161,136,0.07)' : 'white'};
+  padding: 10px 18px;
+  font-size: 0.87rem;
+  color: ${({ $active }) => ($active ? '#BBA188' : '#444')};
+  background: ${({ $active }) => ($active ? 'rgba(187,161,136,0.1)' : 'white')};
+  font-weight: ${({ $active }) => ($active ? '600' : '400')};
   cursor: pointer;
-  font-weight: ${p => p.$active ? 600 : 400};
-  &:hover { background: rgba(187,161,136,0.07); }
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba(187,161,136,0.08); color: #BBA188; }
 `;
+
+// ─── Tabela (header gradient igual ao Pacientes) ──────────────────────────────
 
 export const TableWrapper = styled.div`
   background: white;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+
+  @media (max-width: 768px) {
+    table-layout: auto;
+    min-width: 540px;
+  }
 `;
 
 export const Thead = styled.thead`
-  background: #fdf9f5;
+  background: linear-gradient(135deg, #BBA188, #a8906f);
 `;
 
-export const Th = styled.th`
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #BBA188;
+export const Th = styled.th<{ $width?: string; $center?: boolean }>`
+  padding: 11px 10px;
+  text-align: ${({ $center }) => $center ? 'center' : 'left'};
+  font-size: 0.69rem;
+  font-weight: 600;
+  color: white;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
+  width: ${({ $width }) => $width || 'auto'};
   white-space: nowrap;
 `;
 
 export const Tbody = styled.tbody``;
 
 export const Tr = styled.tr`
-  border-top: 1px solid #f8f8f8;
+  border-bottom: 1px solid #f5f5f5;
   transition: background 0.15s;
-  &:hover { background: rgba(187,161,136,0.03); }
+
+  &:hover { background: #fdf9f5; }
+  &:last-child { border-bottom: none; }
 `;
 
-export const Td = styled.td`
-  padding: 13px 16px;
-  font-size: 0.83rem;
-  color: #333;
+export const Td = styled.td<{ $center?: boolean; $bold?: boolean; $muted?: boolean }>`
+  padding: 10px 10px;
+  font-size: 0.78rem;
+  color: ${({ $muted }) => $muted ? '#777' : '#333'};
+  font-weight: ${({ $bold }) => $bold ? '700' : '400'};
+  text-align: ${({ $center }) => $center ? 'center' : 'left'};
   vertical-align: middle;
 `;
 
@@ -265,7 +355,7 @@ export const Badge = styled.span<{ $bg: string; $color: string }>`
   align-items: center;
   padding: 3px 10px;
   border-radius: 20px;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   background: ${p => p.$bg};
   color: ${p => p.$color};
@@ -275,22 +365,24 @@ export const Badge = styled.span<{ $bg: string; $color: string }>`
 export const ActionGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 `;
 
 export const IconBtn = styled.button`
   width: 30px;
   height: 30px;
+  border: 1.5px solid #e8e8e8;
   border-radius: 8px;
-  border: 1.5px solid #eee;
   background: white;
+  color: #888;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #888;
-  transition: all 0.15s;
-  &:hover { border-color: #BBA188; color: #BBA188; }
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  &:hover { background: #BBA188; border-color: #BBA188; color: white; }
 `;
 
 export const Btn = styled.button<{ $variant?: string; $size?: string; $full?: boolean }>`
@@ -307,16 +399,15 @@ export const Btn = styled.button<{ $variant?: string; $size?: string; $full?: bo
   width: ${p => p.$full ? '100%' : 'auto'};
   justify-content: center;
   ${p => p.$variant === 'primary' ? `
-    background: #1a1a1a;
-    color: white;
+    background: #1a1a1a; color: white;
     &:hover { background: #333; }
   ` : `
-    background: white;
-    color: #555;
-    border-color: #eee;
+    background: white; color: #555; border-color: #e8e8e8;
     &:hover { border-color: #BBA188; color: #BBA188; }
   `}
 `;
+
+// ─── Painel de detalhe lateral ────────────────────────────────────────────────
 
 export const DetailPanel = styled.div`
   width: 320px;
@@ -326,6 +417,7 @@ export const DetailPanel = styled.div`
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
   overflow: hidden;
   align-self: flex-start;
+
   @media (max-width: 1024px) { display: none; }
 `;
 
@@ -341,7 +433,7 @@ export const DetailClose = styled.button`
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  border: 1.5px solid #eee;
+  border: 1.5px solid #e8e8e8;
   background: white;
   display: flex;
   align-items: center;
@@ -371,7 +463,7 @@ export const DetailSection = styled.div`
 `;
 
 export const DetailSectionTitle = styled.div`
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: #BBA188;
   text-transform: uppercase;
@@ -440,19 +532,27 @@ export const LogTime = styled.div`
 `;
 
 export const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
   text-align: center;
-  padding: 48px;
   color: #bbb;
-  font-size: 0.85rem;
-  background: white;
-  border-radius: 16px;
+
+  svg { margin-bottom: 14px; opacity: 0.35; }
+  h3  { font-size: 1rem; color: #555; margin: 0 0 5px; }
+  p   { font-size: 0.85rem; color: #999; margin: 0; }
 `;
+
+// ─── Tickets ──────────────────────────────────────────────────────────────────
 
 export const TicketCard = styled.div`
   background: white;
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   padding: 20px 22px;
+
+  @media (max-width: 480px) { padding: 16px; }
 `;
 
 export const TicketHeader = styled.div`
@@ -461,6 +561,11 @@ export const TicketHeader = styled.div`
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 6px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 8px;
+  }
 `;
 
 export const TicketTitle = styled.div`

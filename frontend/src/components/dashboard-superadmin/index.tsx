@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePermissions } from '@/components/ui/hooks/usePermissions';
-import AccessDenied from '@/components/ui/AccessDenied';
+import { useRoleRedirect } from '@/components/ui/hooks/useRoleRedirect';
 import {
   Container, Header, Title, Subtitle, LiveBadge,
   StatsGrid, StatCard, StatValue, StatLabel, StatTrend, StatIcon,
@@ -72,10 +72,10 @@ const suspensos = EMPRESAS.filter(e => e.status === 'suspenso').length;
 const maxMRR    = Math.max(...MRR_HISTORY.map(m => m.valor));
 
 export default function DashboardSuperAdmin() {
-  const { isSuperAdmin } = usePermissions();
-  if (!isSuperAdmin) return <AccessDenied />;
-
+  const allowed = useRoleRedirect({ superAdminOnly: true });
   const [tab, setTab] = useState<'visao' | 'empresas'>('visao');
+
+  if (!allowed) return null;
 
   return (
     <Container>

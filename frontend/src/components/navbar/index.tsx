@@ -24,13 +24,11 @@ import {
   CreditCard,
   Bell,
   HeadphonesIcon,
-  UserPlus,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/components/ui/hooks/usePermissions';
-import { useCurrentUser } from '@/components/ui/hooks/useCurrentUser';
 import { Permission } from '@/types/auth';
 
 import {
@@ -56,72 +54,100 @@ import {
   SectionDividerLabel,
 } from './styles';
 
+// ─── Seções do Super Admin ────────────────────────────────────────────────────
+
 const superAdminSections = [
   {
     label: 'Visão Geral',
     items: [
-      { label: 'Dashboard',     href: '/dashboard-admin', icon: LayoutDashboard },
+      { label: 'Dashboard', href: '/dashboard-admin', icon: LayoutDashboard },
     ],
   },
   {
     label: 'Gestão',
     items: [
-      { label: 'Empresas',      href: '/empresas',        icon: Building2       },
-      { label: 'Financeiro',    href: '/finance',         icon: CreditCard      },
+      { label: 'Empresas',   href: '/empresas', icon: Building2  },
+      { label: 'Financeiro', href: '/finance',  icon: CreditCard },
     ],
   },
   {
     label: 'Operação',
     items: [
-      { label: 'Suporte',       href: '/suporte',         icon: HeadphonesIcon  },
-      { label: 'Comunicados',   href: '/comunicados',     icon: Bell            },
-      { label: 'Configurações', href: '/settings',        icon: Settings        },
+      { label: 'Suporte',       href: '/suporte',     icon: HeadphonesIcon },
+      { label: 'Comunicados',   href: '/comunicados', icon: Bell           },
+      { label: 'Configurações', href: '/settings',    icon: Settings       },
     ],
   },
 ];
+
+// ─── Seções das empresas (company_admin, gerente, etc.) ───────────────────────
 
 const navSections = [
   {
     label: 'Core',
     items: [
-      { label: 'Dashboard',      href: '/dashboard',          icon: LayoutDashboard, permission: 'dashboard.read'        as Permission, permissionAlt: null },
-      { label: 'Agenda',         href: '/agenda',             icon: CalendarDays,    permission: 'agenda.read'            as Permission, permissionAlt: 'agenda.read_own'        as Permission },
-      { label: 'Pacientes',      href: '/patients',           icon: Users,           permission: 'pacientes.read'         as Permission, permissionAlt: 'pacientes.read_own'     as Permission },
+      { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, permission: 'dashboard.read' as Permission, permissionAlt: null },
+      { label: 'Agenda',    href: '/agenda',    icon: CalendarDays,    permission: 'agenda.read'    as Permission, permissionAlt: 'agenda.read_own'    as Permission },
+      { label: 'Pacientes', href: '/patients',  icon: Users,           permission: 'pacientes.read' as Permission, permissionAlt: 'pacientes.read_own' as Permission },
     ],
   },
   {
     label: 'Clínico',
     items: [
-      { label: 'Histórico Pac.', href: '/historico-paciente', icon: ClipboardList,   permission: 'historico.read'         as Permission, permissionAlt: 'historico.read_own'     as Permission },
-      { label: 'Fotos Clínicas', href: '/fotos',              icon: Camera,          permission: 'fotos.read'             as Permission, permissionAlt: 'fotos.read_own'         as Permission },
-      { label: 'Reaplicações',   href: '/reaplicacoes',       icon: RefreshCcw,      permission: 'reaplicacoes.read'      as Permission, permissionAlt: 'reaplicacoes.read_own'  as Permission },
-      { label: 'Procedimentos',  href: '/procedures',         icon: Syringe,         permission: 'procedimentos.read'     as Permission, permissionAlt: null },
-      { label: 'Consentimento',  href: '/consentimento',      icon: FileText,        permission: 'consentimento.read'     as Permission, permissionAlt: 'consentimento.read_own' as Permission },
+      { label: 'Histórico Pac.', href: '/historico-paciente', icon: ClipboardList, permission: 'historico.read'    as Permission, permissionAlt: 'historico.read_own'     as Permission },
+      { label: 'Fotos Clínicas', href: '/fotos',              icon: Camera,        permission: 'fotos.read'        as Permission, permissionAlt: 'fotos.read_own'         as Permission },
+      { label: 'Reaplicações',   href: '/reaplicacoes',       icon: RefreshCcw,    permission: 'reaplicacoes.read' as Permission, permissionAlt: 'reaplicacoes.read_own'  as Permission },
+      { label: 'Procedimentos',  href: '/procedures',         icon: Syringe,       permission: 'procedimentos.read' as Permission, permissionAlt: null },
+      { label: 'Consentimento',  href: '/consentimento',      icon: FileText,      permission: 'consentimento.read' as Permission, permissionAlt: 'consentimento.read_own' as Permission },
     ],
   },
   {
     label: 'Operacional',
     items: [
-      { label: 'Profissionais',  href: '/profissionais',      icon: Stethoscope,     permission: 'profissionais.read'    as Permission, permissionAlt: null },
-      { label: 'Lotes ANVISA',   href: '/lotes',              icon: FlaskConical,    permission: 'lotes.read'            as Permission, permissionAlt: null },
-      { label: 'Estoque',        href: '/estoque',            icon: Package,         permission: 'estoque.read'          as Permission, permissionAlt: null },
-      { label: 'Financeiro',     href: '/finance',            icon: DollarSign,      permission: 'financeiro.read'       as Permission, permissionAlt: null },
-      { label: 'Comissões',      href: '/comissoes',          icon: BadgeDollarSign, permission: 'comissoes.read'        as Permission, permissionAlt: 'comissoes.read_own'     as Permission },
-      { label: 'Relatórios',     href: '/reports',            icon: BarChart3,       permission: 'relatorios.financeiro' as Permission, permissionAlt: null },
-      { label: 'Termos de Uso',  href: '/termos',             icon: ScrollText,      permission: 'configuracoes.read'    as Permission, permissionAlt: null },
-      { label: 'Configurações',  href: '/settings',           icon: Settings,        permission: 'configuracoes.read'    as Permission, permissionAlt: null },
+      { label: 'Profissionais', href: '/profissionais', icon: Stethoscope,     permission: 'profissionais.read'    as Permission, permissionAlt: null },
+      { label: 'Lotes ANVISA',  href: '/lotes',         icon: FlaskConical,    permission: 'lotes.read'            as Permission, permissionAlt: null },
+      { label: 'Estoque',       href: '/estoque',       icon: Package,         permission: 'estoque.read'          as Permission, permissionAlt: null },
+      { label: 'Financeiro',    href: '/finance',       icon: DollarSign,      permission: 'financeiro.read'       as Permission, permissionAlt: null },
+      { label: 'Comissões',     href: '/comissoes',     icon: BadgeDollarSign, permission: 'comissoes.read'        as Permission, permissionAlt: 'comissoes.read_own' as Permission },
+      { label: 'Relatórios',    href: '/reports',       icon: BarChart3,       permission: 'relatorios.financeiro' as Permission, permissionAlt: null },
+      { label: 'Termos de Uso', href: '/termos',        icon: ScrollText,      permission: 'configuracoes.read'    as Permission, permissionAlt: null },
+      { label: 'Configurações', href: '/settings',      icon: Settings,        permission: 'configuracoes.read'    as Permission, permissionAlt: null },
+    ],
+  },
+  {
+    // Seção "Ajuda" — aparece apenas para quem tem suporte.read ou comunicados.read
+    // company_admin tem '*' (tudo), gerente tem ambas explicitamente
+    // tecnico, recepcionista e financeiro NÃO têm → seção some automaticamente
+    label: 'Ajuda',
+    items: [
+      {
+        label: 'Suporte',
+        href: '/suporte-empresa',
+        icon: HeadphonesIcon,
+        permission: 'suporte.read' as Permission,
+        permissionAlt: null,
+      },
+      {
+        label: 'Comunicados',
+        href: '/comunicados/comunicados-empresa',
+        icon: Bell,
+        permission: 'comunicados.read' as Permission,
+        permissionAlt: null,
+      },
     ],
   },
 ];
 
+// ─── Componente ───────────────────────────────────────────────────────────────
+
 export default function Navbar() {
-  const pathname   = usePathname();
-  const router     = useRouter();
-  const { user, logout } = useAuth();
+  const pathname              = usePathname();
+  const router                = useRouter();
+  const { user, logout }      = useAuth();
   const { can, isSuperAdmin } = usePermissions();
   const [isOpen,    setIsOpen]    = useState(false);
   const [collapsed, setCollapsed] = useState(true);
-  const navbarRef  = useRef<HTMLDivElement>(null);
+  const navbarRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => { logout(); router.push('/login'); };
 
@@ -168,16 +194,16 @@ export default function Navbar() {
           >
             {collapsed ? (
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <line x1="3" y1="6" x2="14" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="3" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="3" y1="16" x2="14" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="3"  y1="6"  x2="14" y2="6"  stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="3"  y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="3"  y1="16" x2="14" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 <polyline points="16,8 19,11 16,14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
               </svg>
             ) : (
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <line x1="8" y1="6" x2="19" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="8" y1="11" x2="19" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="8" y1="16" x2="19" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8"  y1="6"  x2="19" y2="6"  stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8"  y1="11" x2="19" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8"  y1="16" x2="19" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 <polyline points="6,8 3,11 6,14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
               </svg>
             )}
@@ -207,7 +233,13 @@ export default function Navbar() {
                   const Icon     = item.icon;
                   const selected = pathname === item.href;
                   return (
-                    <NavLink key={item.href} href={item.href} onClick={() => setIsOpen(false)} $selected={selected} $collapsed={collapsed}>
+                    <NavLink
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      $selected={selected}
+                      $collapsed={collapsed}
+                    >
                       <NavLinkIcon $selected={selected}><Icon size={18} /></NavLinkIcon>
                       <NavLinkText $selected={selected} $collapsed={collapsed}>{item.label}</NavLinkText>
                       <NavTooltip>{item.label}</NavTooltip>

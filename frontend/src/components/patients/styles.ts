@@ -377,8 +377,6 @@ export const EmptyState = styled.div`
   p   { font-size: 0.85rem; color: #999; margin: 0; }
 `;
 
-/* ── Modal forms ── */
-
 export const FormGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -386,6 +384,9 @@ export const FormGrid = styled.div`
 
   @media (max-width: 560px) {
     grid-template-columns: 1fr;
+    & > * {
+      grid-column: 1 !important;
+    }
   }
 `;
 
@@ -408,13 +409,105 @@ export const WizardNav = styled.div`
   width: 100%;
 
   @media (max-width: 480px) {
-    flex-direction: column;
     gap: 10px;
 
     & > button {
-      width: 100%;
+      flex: 1;
       justify-content: center;
     }
+  }
+`;
+
+export const WizardSteps = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0ebe4;
+
+  @media (max-width: 600px) {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    gap: 0;
+  }
+`;
+
+export const WizardStep = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  max-width: 140px;
+
+  @media (max-width: 600px) {
+    max-width: 80px;
+  }
+`;
+
+export const WizardStepLine = styled.div<{ $done?: boolean }>`
+  position: absolute;
+  top: 14px;
+  left: calc(-50%);
+  right: calc(50% + 14px);
+  height: 2px;
+  background: ${({ $done }) => $done ? '#BBA188' : '#e8e8e8'};
+  transition: background 0.3s;
+  z-index: 0;
+`;
+
+export const WizardStepCircle = styled.div<{ $done?: boolean; $current?: boolean }>`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  transition: all 0.25s;
+  background: ${({ $done }) => $done ? '#BBA188' : 'white'};
+  color: ${({ $done, $current }) => $done ? 'white' : $current ? '#BBA188' : '#ccc'};
+  border: 2px solid ${({ $done, $current }) => ($done || $current) ? '#BBA188' : '#e8e8e8'};
+  box-shadow: ${({ $current }) => $current ? '0 0 0 4px rgba(187,161,136,0.15)' : 'none'};
+
+  @media (max-width: 600px) {
+    width: 24px;
+    height: 24px;
+    font-size: 0.68rem;
+  }
+`;
+
+export const WizardStepLabel = styled.span<{ $current?: boolean }>`
+  margin-top: 6px;
+  font-size: 0.68rem;
+  text-align: center;
+  color: ${({ $current }) => $current ? '#BBA188' : '#bbb'};
+  font-weight: ${({ $current }) => $current ? '600' : '400'};
+  line-height: 1.3;
+  transition: color 0.2s;
+
+  @media (max-width: 600px) {
+    font-size: 0.58rem;
+    margin-top: 4px;
+  }
+
+  @media (max-width: 400px) {
+    display: none;
+  }
+`;
+
+export const StepSection = styled.div`
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  @media (max-width: 480px) {
+    min-height: 200px;
   }
 `;
 
