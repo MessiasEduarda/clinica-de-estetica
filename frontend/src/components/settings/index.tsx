@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { usePermissions } from '@/components/ui/hooks/usePermissions';
+import AccessDenied from '@/components/ui/AccessDenied';
 import CancelModal from '@/components/modals/cancelModal';
 import ConfirmModal from '@/components/modals/confirmModal';
 import SucessModal from '@/components/modals/sucessModal';
@@ -227,6 +229,11 @@ function Modal({ open, title, children, onClose, footer }: any) {
 }
 
 export default function Configuracoes() {
+  // ── Proteção: somente Super Admin pode acessar ──
+  const { isSuperAdmin } = usePermissions();
+  if (!isSuperAdmin) return <AccessDenied />;
+  // ────────────────────────────────────────────────
+
   const [active,      setActive]      = useState('plataforma');
   const [accentColor, setAccentColor] = useState('#BBA188');
   const [toast,       setToast]       = useState('');

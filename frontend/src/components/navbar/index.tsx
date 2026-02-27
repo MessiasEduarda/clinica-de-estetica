@@ -20,17 +20,21 @@ import {
   ClipboardList,
   Stethoscope,
   ScrollText,
+  Building2,
+  CreditCard,
+  Bell,
+  HeadphonesIcon,
+  UserPlus,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/components/ui/hooks/usePermissions';
 import { useCurrentUser } from '@/components/ui/hooks/useCurrentUser';
-import { ROLE_LABELS, ROLE_COLORS, Permission } from '@/types/auth';
-import MockLoginScreen from '@/components/auth/MockLoginScreen';
+import { Permission } from '@/types/auth';
+
 import {
   NavbarContainer,
-  LogoButton,
   TopSection,
   TitleText,
   GreetingText,
@@ -51,6 +55,30 @@ import {
   SectionDividerLine,
   SectionDividerLabel,
 } from './styles';
+
+const superAdminSections = [
+  {
+    label: 'Visão Geral',
+    items: [
+      { label: 'Dashboard',     href: '/dashboard-admin', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: 'Gestão',
+    items: [
+      { label: 'Empresas',      href: '/empresas',        icon: Building2       },
+      { label: 'Financeiro',    href: '/finance',         icon: CreditCard      },
+    ],
+  },
+  {
+    label: 'Operação',
+    items: [
+      { label: 'Suporte',       href: '/suporte',         icon: HeadphonesIcon  },
+      { label: 'Comunicados',   href: '/comunicados',     icon: Bell            },
+      { label: 'Configurações', href: '/settings',        icon: Settings        },
+    ],
+  },
+];
 
 const navSections = [
   {
@@ -87,28 +115,19 @@ const navSections = [
 ];
 
 export default function Navbar() {
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname   = usePathname();
+  const router     = useRouter();
   const { user, logout } = useAuth();
   const { can, isSuperAdmin } = usePermissions();
-  const { currentUser } = useCurrentUser();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen,    setIsOpen]    = useState(false);
   const [collapsed, setCollapsed] = useState(true);
-  const [showSwitcher, setShowSwitcher] = useState(false);
-  const navbarRef = useRef<HTMLDivElement>(null);
+  const navbarRef  = useRef<HTMLDivElement>(null);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/login');
-  };
+  const handleLogout = () => { logout(); router.push('/login'); };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        !collapsed &&
-        navbarRef.current &&
-        !navbarRef.current.contains(event.target as Node)
-      ) {
+      if (!collapsed && navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
         setCollapsed(true);
       }
     };
@@ -123,16 +142,14 @@ export default function Navbar() {
     return false;
   };
 
-  const filteredSections = navSections
-    .map(section => ({
-      ...section,
-      items: section.items.filter(item => canSeeItem(item.permission, item.permissionAlt)),
-    }))
-    .filter(section => section.items.length > 0);
-
-  const roleKey    = currentUser?.role;
-  const roleColors = roleKey ? ROLE_COLORS[roleKey] : null;
-  const roleLabel  = roleKey ? ROLE_LABELS[roleKey] : 'perfil';
+  const sectionsToRender = isSuperAdmin
+    ? superAdminSections
+    : navSections
+        .map(section => ({
+          ...section,
+          items: section.items.filter(item => canSeeItem(item.permission, item.permissionAlt)),
+        }))
+        .filter(section => section.items.length > 0);
 
   return (
     <>
@@ -146,45 +163,39 @@ export default function Navbar() {
         <div style={{ width: '100%' }}>
           <CollapseButton
             $collapsed={collapsed}
-            onClick={() => setCollapsed((prev) => !prev)}
+            onClick={() => setCollapsed(prev => !prev)}
             title={collapsed ? 'Expandir menu' : 'Recolher menu'}
           >
             {collapsed ? (
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <line x1="3"  y1="6"  x2="14" y2="6"  stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="3"  y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="3"  y1="16" x2="14" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="3" y1="6" x2="14" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="3" y1="11" x2="14" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="3" y1="16" x2="14" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 <polyline points="16,8 19,11 16,14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
               </svg>
             ) : (
               <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <line x1="8"  y1="6"  x2="19" y2="6"  stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="8"  y1="11" x2="19" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <line x1="8"  y1="16" x2="19" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8" y1="6" x2="19" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8" y1="11" x2="19" y2="11" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <line x1="8" y1="16" x2="19" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                 <polyline points="6,8 3,11 6,14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
               </svg>
             )}
           </CollapseButton>
 
           <TopSection $collapsed={collapsed}>
-            <TitleText>Clínica Estética</TitleText>
+            <TitleText>{isSuperAdmin ? 'Admin Sistema' : 'Clínica Estética'}</TitleText>
             <GreetingText>Olá, {user?.name ?? 'Administrador'}</GreetingText>
           </TopSection>
 
           <LogoCollapsed $collapsed={collapsed}>
-            <Image
-              src="/logocjl.png"
-              alt="Logo"
-              width={160}
-              height={160}
-              style={{ objectFit: 'contain', display: 'block' }}
-            />
+            <Image src="/logocjl.png" alt="Logo" width={160} height={160} style={{ objectFit: 'contain', display: 'block' }} />
           </LogoCollapsed>
 
           <DividerTop $collapsed={collapsed} />
 
           <Nav $collapsed={collapsed}>
-            {filteredSections.map((section, sectionIndex) => (
+            {sectionsToRender.map((section, sectionIndex) => (
               <div key={section.label} style={{ width: '100%' }}>
                 <SectionDividerWrap $collapsed={collapsed} $first={sectionIndex === 0}>
                   <SectionDividerLine $collapsed={collapsed} />
@@ -192,23 +203,13 @@ export default function Navbar() {
                   <SectionDividerLine $collapsed={collapsed} />
                 </SectionDividerWrap>
 
-                {section.items.map((item) => {
-                  const Icon = item.icon;
+                {section.items.map(item => {
+                  const Icon     = item.icon;
                   const selected = pathname === item.href;
                   return (
-                    <NavLink
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setIsOpen(false)}
-                      $selected={selected}
-                      $collapsed={collapsed}
-                    >
-                      <NavLinkIcon $selected={selected}>
-                        <Icon size={18} />
-                      </NavLinkIcon>
-                      <NavLinkText $selected={selected} $collapsed={collapsed}>
-                        {item.label}
-                      </NavLinkText>
+                    <NavLink key={item.href} href={item.href} onClick={() => setIsOpen(false)} $selected={selected} $collapsed={collapsed}>
+                      <NavLinkIcon $selected={selected}><Icon size={18} /></NavLinkIcon>
+                      <NavLinkText $selected={selected} $collapsed={collapsed}>{item.label}</NavLinkText>
                       <NavTooltip>{item.label}</NavTooltip>
                     </NavLink>
                   );
@@ -220,13 +221,11 @@ export default function Navbar() {
 
         <div style={{ width: '100%' }}>
           <LogoutDivider $collapsed={collapsed} />
-
           <SectionDividerWrap $collapsed={collapsed} $isBottom>
             <SectionDividerLine $collapsed={collapsed} />
             <SectionDividerLabel $collapsed={collapsed}>Sessão</SectionDividerLabel>
             <SectionDividerLine $collapsed={collapsed} />
           </SectionDividerWrap>
-
           <LogoutButton type="button" onClick={handleLogout} $collapsed={collapsed}>
             <LogOut size={18} />
             <LogoutText $collapsed={collapsed}>Sair da conta</LogoutText>
@@ -234,8 +233,6 @@ export default function Navbar() {
           </LogoutButton>
         </div>
       </NavbarContainer>
-
-      {showSwitcher && <MockLoginScreen onClose={() => setShowSwitcher(false)} />}
     </>
   );
 }

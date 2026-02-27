@@ -9,9 +9,7 @@ import StatCard from '@/components/ui/statcard';
 import Pagination from '@/components/ui/pagination';
 import { useSequentialValidation } from '@/components/ui/hooks/useSequentialValidation';
 import { usePermissions } from '@/components/ui/hooks/usePermissions';
-import { useCurrentUser } from '@/components/ui/hooks/useCurrentUser';
 import PermissionGuard from '@/components/ui/PermissionGuard';
-import MockLoginScreen from '@/components/auth/MockLoginScreen';
 import { ROLE_PERMISSIONS, Permission } from '@/types/auth';
 import {
   Container, Header, Title, StatsGrid, Controls,
@@ -27,7 +25,6 @@ import {
   DetailSection, DetailSectionTitle, StatsRow, StatPill,
   InfoGrid, InfoItem, InfoLabel, InfoValue,
   ObsBox,
-  UserSwitcherBar, UserSwitcherInfo, UserSwitcherName, UserSwitcherBadge, UserSwitcherBtn,
 } from './styles';
 import { validateEmail, validatePassword, ERROR_MESSAGES } from './validation';
 
@@ -226,7 +223,6 @@ const PERM_LABEL: Record<string, string> = {
 const statusOptions = [{ value: 'ativo', label: 'Ativo' }, { value: 'inativo', label: 'Inativo' }];
 const filterStatus  = ['Todos', 'Ativo', 'Inativo'];
 const filterAreas   = ['Todos', 'Técnica', 'Administrativa'];
-// 5 steps agora
 const STEP_LABELS   = ['Dados Básicos', 'Área', 'Cargo', 'Acesso', 'Permissões'];
 
 const INITIAL_PROFISSIONAIS = [
@@ -353,8 +349,6 @@ const ITEMS_PER_PAGE = 10;
 
 export default function Profissionais() {
   const { can } = usePermissions();
-  const { currentUser, roleLabel, roleColors } = useCurrentUser();
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const canCreate = can('profissionais.create');
   const canEdit   = can('profissionais.edit');
@@ -375,7 +369,6 @@ export default function Profissionais() {
   const [isEditing,            setIsEditing]            = useState(false);
   const [currentPage,          setCurrentPage]          = useState(1);
 
-  
   const step1Validation = useSequentialValidation<Step1Field>([
     { key: 'nome',     validate: (v) => !v.trim() ? 'Nome completo é obrigatório' : null },
     { key: 'email',    validate: (v) => { const err = validateEmail(v); return err ? err.message : null; } },
@@ -483,7 +476,7 @@ export default function Profissionais() {
     if (s === 2) return step2Validation.validate({ area: form.area });
     if (s === 3) return step3Validation.validate({ cargo: form.cargo, registro: form.registro, especialidade: form.especialidade });
     if (s === 4) return step4Validation.validate({ senha: form.senha, confirmarSenha: form.confirmarSenha });
-    return true; 
+    return true;
   }
 
   function nextStep() { if (!validateStep(step)) return; setStep(s => Math.min(s + 1, 5)); }
@@ -844,38 +837,13 @@ export default function Profissionais() {
   if (!canRead) {
     return (
       <Container>
-        {currentUser && roleColors && (
-          <UserSwitcherBar>
-            <UserSwitcherInfo>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <UserSwitcherName>Logado como {currentUser.name}</UserSwitcherName>
-              <UserSwitcherBadge $bg={roleColors.bg} $color={roleColors.color}>{roleLabel}</UserSwitcherBadge>
-            </UserSwitcherInfo>
-            <UserSwitcherBtn onClick={() => setShowLoginModal(true)}>Trocar perfil</UserSwitcherBtn>
-          </UserSwitcherBar>
-        )}
         <PermissionGuard permission="profissionais.read" showDenied />
-        {showLoginModal && <MockLoginScreen onClose={() => setShowLoginModal(false)} />}
       </Container>
     );
   }
 
   return (
     <Container>
-      {currentUser && roleColors && (
-        <UserSwitcherBar>
-          <UserSwitcherInfo>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <UserSwitcherName>Logado como <strong>{currentUser.name}</strong></UserSwitcherName>
-            <UserSwitcherBadge $bg={roleColors.bg} $color={roleColors.color}>{roleLabel}</UserSwitcherBadge>
-          </UserSwitcherInfo>
-          <UserSwitcherBtn onClick={() => setShowLoginModal(true)}>Trocar perfil</UserSwitcherBtn>
-        </UserSwitcherBar>
-      )}
-
       <Header>
         <Title>Profissionais</Title>
         <PermissionGuard permission="profissionais.create">
@@ -1160,8 +1128,6 @@ export default function Profissionais() {
           </form>
         </Modal>
       </PermissionGuard>
-
-      {showLoginModal && <MockLoginScreen onClose={() => setShowLoginModal(false)} />}
     </Container>
   );
 }
